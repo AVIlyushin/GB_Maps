@@ -11,6 +11,7 @@ import GoogleMaps
 import CoreLocation
 import Realm
 import RealmSwift
+
 class MapViewController: UIViewController {
     
     @IBOutlet weak var mapView: GMSMapView!
