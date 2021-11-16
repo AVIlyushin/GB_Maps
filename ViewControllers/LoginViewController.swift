@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class LoginViewController: UIViewController {
     
@@ -16,14 +18,16 @@ class LoginViewController: UIViewController {
     
     @IBOutlet weak var registerLabel: UILabel!
     
-    var loginRouter: LoginRouter!
+    @IBOutlet weak var loginButton: UIButton!
     
+    var loginRouter: LoginRouter!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         loginRouter = LoginRouter(vc: self)
         configureTextFields()
         configureRegisterLabel()
+        configureLoginBindings()
     }
     
     @IBAction func loginButtonWasTapped(_ sender: UIButton) {
@@ -56,6 +60,18 @@ class LoginViewController: UIViewController {
         let attributedString = NSMutableAttributedString(string: "Зарегистрироваться")
         attributedString.addAttribute(.link, value: "Зарегистрироваться", range: NSRange(location: 0, length: 18))
         registerLabel.attributedText = attributedString
+    }
+    
+    func configureLoginBindings() {
+        Observable.combineLatest(
+            loginTextField.rx.text,
+            passwordTextField.rx.text
+        ).map { login, password in
+            return !(login ?? "").isEmpty && (password ?? "").count >= 3
+        }.bind { [weak loginButton] inputFilled in
+            loginButton?.isEnabled = inputFilled
+            loginButton?.setTitleColor(inputFilled ? UIColor.black : UIColor.gray, for: .normal)
+        }
     }
     
     @objc
@@ -116,5 +132,24 @@ final class LoginRouter: BaseRouter {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "RegisterViewController") as! RegisterViewController
         present(vc: vc)
+    }
+}
+
+extension LoginViewController {
+    override func viewDidAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(hideView(_:)), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(showView(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+        }
+
+    @objc func hideView(_ notification: Notification) {
+        self.view.isHidden = true
+    }
+    @objc func showView(_ notification: Notification) {
+        self.view.isHidden = false
     }
 }
