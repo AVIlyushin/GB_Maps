@@ -8,14 +8,29 @@
 
 import UIKit
 import GoogleMaps
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        let center = UNUserNotificationCenter.current()
+              center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                  guard granted else {
+                      print("Разрешение не получено")
+                      return
+                  }
+                  
+                  self.sendNotificationRequest(
+                      content: self.makeNotificationContent(),
+                      trigger: self.makeIntervalNotificationTrigger()
+                  )
+              }
+        
         GMSServices.provideAPIKey("AIzaSyDGrwVvbZwEjLxn5VjL9ov-UTLEw3q0vNs")
+        
         return true
     }
 
@@ -31,5 +46,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
+    func makeNotificationContent() -> UNNotificationContent {
+           let content = UNMutableNotificationContent()
+           content.title = "Пожалуйста"
+           content.subtitle = "Запустите меня"
+           content.body = "Прошло 30 минут"
+           content.badge = 4
+           return content
+       }
+       
+       func makeIntervalNotificationTrigger() -> UNNotificationTrigger {
+           return UNTimeIntervalNotificationTrigger(
+               timeInterval: 1800,
+               repeats: false
+           )
+       }
+       
+       func sendNotificationRequest(
+           content: UNNotificationContent,
+           trigger: UNNotificationTrigger) {
+           
+           let request = UNNotificationRequest(
+               identifier: "notification",
+               content: content,
+               trigger: trigger
+           )
+           
+           let center = UNUserNotificationCenter.current()
+           center.add(request) { error in
+               if let error = error {
+                   print(error.localizedDescription)
+               }
+           }
+       }
+        
 }
 
+extension UIViewController {
+    func showAlert(title : String, message: String){
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        self.present(alert, animated: true, completion: nil)
+    }
+}

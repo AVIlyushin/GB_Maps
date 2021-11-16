@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="GH9-eV-GRl">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="GH9-eV-GRl">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Map View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController restorationIdentifier="MapViewController" storyboardIdentifier="MapViewController" id="BYZ-38-t0r" customClass="MapViewController" customModule="frameworks" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="MapViewController" storyboardIdentifier="MapViewController" id="BYZ-38-t0r" customClass="MapViewController" customModule="GB_Maps" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1Ev-Jm-p1R" customClass="GMSMapView">
                                 <rect key="frame" x="0.0" y="44" width="414" height="818"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </view>
                         </subviews>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="1Ev-Jm-p1R" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="0Jn-am-Bae"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="1Ev-Jm-p1R" secondAttribute="bottom" id="4qd-sr-PKw"/>
                             <constraint firstItem="1Ev-Jm-p1R" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="YPM-Y9-4jJ"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="1Ev-Jm-p1R" secondAttribute="trailing" id="gcH-oL-M8x"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="JZ0-B2-8SJ">
                         <rightBarButtonItems>
@@ -63,7 +62,7 @@
         <!--Login View Controller-->
         <scene sceneID="c7M-ng-M1Z">
             <objects>
-                <viewController id="fno-cZ-B1H" customClass="LoginViewController" customModule="frameworks" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="fno-cZ-B1H" customClass="LoginViewController" customModule="GB_Maps" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="sCx-aK-nN0">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -74,7 +73,7 @@
                                     <constraint firstAttribute="height" constant="35" id="mXo-FE-TZX"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Пароль" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Hxe-f4-Jp1">
                                 <rect key="frame" x="20" y="397" width="374" height="35"/>
@@ -82,7 +81,7 @@
                                     <constraint firstAttribute="height" constant="35" id="c3A-yD-5f3"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Learning" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X6f-df-o9z">
                                 <rect key="frame" x="116" y="138" width="182.5" height="54"/>
@@ -90,7 +89,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wRj-cP-kMD">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wRj-cP-kMD">
                                 <rect key="frame" x="132" y="482" width="150" height="35"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="150" id="3fB-Et-Gz1"/>
@@ -98,7 +97,7 @@
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <state key="normal" title="Войти">
-                                    <color key="titleColor" systemColor="labelColor"/>
+                                    <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <connections>
                                     <action selector="loginButtonWasTapped:" destination="fno-cZ-B1H" eventType="touchUpInside" id="2sA-aR-mj4"/>
@@ -111,8 +110,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <viewLayoutGuide key="safeArea" id="drF-83-NB1"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="XmI-2h-CVB" firstAttribute="leading" secondItem="drF-83-NB1" secondAttribute="leading" constant="20" id="3ie-AE-dst"/>
                             <constraint firstItem="abv-sJ-boB" firstAttribute="leading" secondItem="drF-83-NB1" secondAttribute="leading" constant="20" id="4eQ-pP-IlJ"/>
@@ -130,9 +128,11 @@
                             <constraint firstItem="wRj-cP-kMD" firstAttribute="centerX" secondItem="sCx-aK-nN0" secondAttribute="centerX" id="s1t-Cc-TuU"/>
                             <constraint firstItem="Hxe-f4-Jp1" firstAttribute="leading" secondItem="drF-83-NB1" secondAttribute="leading" constant="20" id="uBp-CY-MXG"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="drF-83-NB1"/>
                     </view>
                     <navigationItem key="navigationItem" id="nho-JG-8r3"/>
                     <connections>
+                        <outlet property="loginButton" destination="wRj-cP-kMD" id="Nb0-zo-cue"/>
                         <outlet property="loginTextField" destination="XmI-2h-CVB" id="uLP-Yv-eM0"/>
                         <outlet property="passwordTextField" destination="Hxe-f4-Jp1" id="cAP-k9-uvE"/>
                         <outlet property="registerLabel" destination="abv-sJ-boB" id="XD4-kg-nuA"/>
@@ -145,7 +145,7 @@
         <!--Register View Controller-->
         <scene sceneID="QMc-9w-Bwy">
             <objects>
-                <viewController restorationIdentifier="RegisterViewController" storyboardIdentifier="RegisterViewController" id="Xgf-rF-Liu" customClass="RegisterViewController" customModule="frameworks" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="RegisterViewController" storyboardIdentifier="RegisterViewController" id="Xgf-rF-Liu" customClass="RegisterViewController" customModule="GB_Maps" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ogl-sd-xex">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -176,7 +176,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Регистрация" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pAe-EI-h4L">
-                                <rect key="frame" x="100" y="265.5" width="214.5" height="60"/>
+                                <rect key="frame" x="100" y="265.5" width="214" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="LnN-hP-n9R"/>
                                 </constraints>
@@ -184,7 +184,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="TqY-DC-Cfq">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="TqY-DC-Cfq">
                                 <rect key="frame" x="50" y="485.5" width="314" height="80"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="3NZ-Tv-qIv"/>
@@ -192,7 +192,7 @@
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <state key="normal" title="Сохранить изменения">
-                                    <color key="titleColor" systemColor="labelColor"/>
+                                    <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <connections>
                                     <action selector="saveButtonWasTapped:" destination="Xgf-rF-Liu" eventType="touchUpInside" id="DpM-VP-PrG"/>
@@ -208,8 +208,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <viewLayoutGuide key="safeArea" id="E1o-In-pyu"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="TqY-DC-Cfq" firstAttribute="leading" secondItem="E1o-In-pyu" secondAttribute="leading" constant="50" id="0GT-ja-RQP"/>
                             <constraint firstItem="E1o-In-pyu" firstAttribute="trailing" secondItem="L8f-Xt-XJb" secondAttribute="trailing" constant="20" id="2TW-Me-mmM"/>
@@ -228,6 +227,7 @@
                             <constraint firstItem="E1o-In-pyu" firstAttribute="trailing" secondItem="8hR-7n-eWE" secondAttribute="trailing" constant="20" id="xG7-bT-zNe"/>
                             <constraint firstItem="8hR-7n-eWE" firstAttribute="leading" secondItem="iup-Ie-Cll" secondAttribute="trailing" constant="20" id="yTu-ZM-6Kd"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="E1o-In-pyu"/>
                     </view>
                     <connections>
                         <outlet property="loginTextField" destination="L8f-Xt-XJb" id="I1T-LO-899"/>
@@ -257,11 +257,5 @@
     </scenes>
     <resources>
         <image name="GMSNavNightModeSprites-0-1x.png" width="128" height="142"/>
-        <systemColor name="labelColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
     </resources>
 </document>
