@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class LoginViewController: UIViewController {
     
@@ -16,15 +18,31 @@ class LoginViewController: UIViewController {
     
     @IBOutlet weak var registerLabel: UILabel!
     
+    @IBOutlet weak var loginButton: UIButton!
     var loginRouter: LoginRouter!
-    
+    var onTakePicture: ((UIImage) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         loginRouter = LoginRouter(vc: self)
         configureTextFields()
         configureRegisterLabel()
+        configureLoginBindings()
     }
+    @IBAction func takePicture(_ sender: UIButton) {
+        guard UIImagePickerController.isSourceTypeAvailable(.photoLibrary) else { return }
+        // Создаём контроллер и настраиваем его
+        let imagePickerController = UIImagePickerController()
+        // Источник изображений: камера
+        imagePickerController.sourceType = .photoLibrary
+        // Изображение можно редактировать
+        imagePickerController.allowsEditing = true
+        imagePickerController.delegate = self
+        
+        // Показываем контроллер
+        present(imagePickerController, animated: true)
+    }
+    
     
     @IBAction func loginButtonWasTapped(_ sender: UIButton) {
         UserDefaults.standard.set(true, forKey: "isLogin")
@@ -36,7 +54,7 @@ class LoginViewController: UIViewController {
             loginTextField.isError(baseColor: UIColor.gray.cgColor, numberOfShakes: 3, revert: true)
             return
         }
-
+        
         guard !password.isEmpty else {
             passwordTextField.isError(baseColor: UIColor.gray.cgColor, numberOfShakes: 3, revert: true)
             return
@@ -58,12 +76,24 @@ class LoginViewController: UIViewController {
         registerLabel.attributedText = attributedString
     }
     
+    func configureLoginBindings() {
+        Observable.combineLatest(
+            loginTextField.rx.text,
+            passwordTextField.rx.text
+        ).map { login, password in
+            return !(login ?? "").isEmpty && (password ?? "").count >= 3
+        }.bind { [weak loginButton] inputFilled in
+            loginButton?.isEnabled = inputFilled
+            loginButton?.setTitleColor(inputFilled ? UIColor.black : UIColor.gray, for: .normal)
+        }
+    }
+    
     @objc
     func registerTap(sender:UITapGestureRecognizer) {
         loginRouter.toRegister()
     }
     
-
+    
     func authorize(login : String, password : String){
         
         let dataFromRealm : [User] = RealmService.getDataFromRealm(with: "login == '\(login)' AND password == '\(password)'")
@@ -71,7 +101,7 @@ class LoginViewController: UIViewController {
         if dataFromRealm.isEmpty {
             self.showAlert(title: "Ошибка авторизации!", message: "Неправильные логин/пароль")
         } else {
-            loginRouter.toMain()
+            loginRouter.toMap()
         }
     }
     
@@ -93,7 +123,7 @@ extension UITextField {
         animation.duration = 0.4
         if revert { animation.autoreverses = true } else { animation.autoreverses = false }
         self.layer.add(animation, forKey: "")
-
+        
         let shake: CABasicAnimation = CABasicAnimation(keyPath: "position")
         shake.duration = 0.07
         shake.repeatCount = shakes
@@ -106,15 +136,72 @@ extension UITextField {
 
 final class LoginRouter: BaseRouter {
     
-    
-    func toMain() {
+    func toMap(image : UIImage? = nil) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "MapViewController") as! MapViewController
+        vc.img = image
         push(vc: vc)
     }
+    
     func toRegister() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "RegisterViewController") as! RegisterViewController
         present(vc: vc)
+    }
+}
+
+extension LoginViewController {
+    override func viewDidAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(hideView(_:)), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(showView(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+    
+    @objc func hideView(_ notification: Notification) {
+        self.view.isHidden = true
+    }
+    @objc func showView(_ notification: Notification) {
+        self.view.isHidden = false
+    }
+}
+
+
+extension LoginViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        picker.dismiss(animated: true) { [weak self] in
+            guard let img = self?.extractImage(from: info) else  { return }
+            //сохраняем в галерею
+            UIImageWriteToSavedPhotosAlbum(img, self, #selector(self?.image(_:didFinishSavingWithError:contextInfo:)), nil)
+            //открываем карту
+            self?.loginRouter.toMap(image: img)
+        }
+    }
+    
+    private func extractImage(from info: [UIImagePickerController.InfoKey: Any]) -> UIImage? {
+        if let image = info[UIImagePickerController.InfoKey(rawValue: UIImagePickerController.InfoKey.editedImage.rawValue)] as? UIImage {
+            return image
+        } else if let image = info[UIImagePickerController.InfoKey(rawValue: UIImagePickerController.InfoKey.originalImage.rawValue)] as? UIImage {
+            return image
+        } else {
+            return nil
+        }
+    }
+    
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            showAlert(title: "Ошибка сохранения", message: error.localizedDescription)
+        } else {
+            showAlert(title: "Успешно!", message: "Изображение сохранено в галерею!")
+        }
     }
 }

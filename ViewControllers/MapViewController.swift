@@ -14,9 +14,11 @@ import RealmSwift
 class MapViewController: UIViewController {
     
     @IBOutlet weak var mapView: GMSMapView!
-    var locationManager: CLLocationManager?
+    let locationManager = LocationManager.instance
     var route: GMSPolyline?
     var routePath: GMSMutablePath?
+    var marker : GMSMarker? = nil
+    var img : UIImage? = nil
     @IBOutlet weak var addButton: UIBarButtonItem!
     @IBOutlet weak var stopButton: UIBarButtonItem!
     @IBOutlet weak var lastButton: UIBarButtonItem!
@@ -27,15 +29,24 @@ class MapViewController: UIViewController {
     }
     
     func configureLocationManager() {
-        locationManager = CLLocationManager()
-        locationManager?.delegate = self
-        locationManager?.distanceFilter = 100.0;
-        locationManager?.allowsBackgroundLocationUpdates = true
-        locationManager?.pausesLocationUpdatesAutomatically = false
-        locationManager?.startMonitoringSignificantLocationChanges()
-        
-        locationManager?.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-        locationManager?.requestAlwaysAuthorization()
+        locationManager
+            .location
+            .asObservable()
+            .bind { [weak self] location in
+                guard let location = location else { return }
+                self?.routePath?.add(location.coordinate)
+                self?.route?.path = self?.routePath
+                let position = GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 17)
+                self?.mapView.animate(to: position)
+                if self?.marker != nil {
+                    self?.marker!.map = nil
+                }
+                self?.marker = GMSMarker(position: location.coordinate)
+                if let image = self?.img {
+                    self?.marker!.icon =  self?.drawImageWithProfilePic(pp: image, image: GMSMarker.markerImage(with: .red))
+                }
+                self?.marker!.map = self?.mapView
+            }
     }
     
     @IBAction func stopButtonWasTapped(_ sender: UIBarButtonItem) {
@@ -47,7 +58,7 @@ class MapViewController: UIViewController {
             arr.append(model)
         }
         RealmService.saveDataToRealm(arr)
-        locationManager?.stopUpdatingLocation()
+        locationManager.stopUpdatingLocation()
     }
     
     @IBAction func lastRouteButtonWasTapped(_ sender: UIBarButtonItem) {
@@ -73,22 +84,55 @@ class MapViewController: UIViewController {
         route = GMSPolyline()
         routePath = GMSMutablePath()
         route?.map = mapView
-        locationManager?.startUpdatingLocation()
+        locationManager.startUpdatingLocation()
     }
 }
 
-extension MapViewController: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        routePath?.add(location.coordinate)
-        route?.path = routePath
-        let position = GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 17)
-        mapView.animate(to: position)
+extension MapViewController {
+    override func viewDidAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(hideView(_:)), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(showView(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
     }
     
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error)
+    @objc func hideView(_ notification: Notification) {
+        self.view.isHidden = true
+    }
+    @objc func showView(_ notification: Notification) {
+        self.view.isHidden = false
     }
     
+    func drawImageWithProfilePic(pp: UIImage, image: UIImage) -> UIImage {
+        
+        let imgView = UIImageView(image: image)
+        let picImgView = UIImageView(image: pp)
+        picImgView.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+        
+        imgView.addSubview(picImgView)
+        picImgView.center.x = imgView.center.x
+        picImgView.center.y = imgView.center.y - 7
+        picImgView.layer.cornerRadius = picImgView.frame.width/2
+        picImgView.clipsToBounds = true
+        imgView.setNeedsLayout()
+        picImgView.setNeedsLayout()
+        
+        let newImage = imageWithView(view: imgView)
+        return newImage
+    }
+    
+    func imageWithView(view: UIView) -> UIImage {
+        var image: UIImage?
+        UIGraphicsBeginImageContextWithOptions(view.bounds.size, false, 0.0)
+        if let context = UIGraphicsGetCurrentContext() {
+            view.layer.render(in: context)
+            image = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+        }
+        return image ?? UIImage()
+    }
     
 }
