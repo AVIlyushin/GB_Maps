@@ -8,7 +8,6 @@
 
 import Foundation
 import RealmSwift
-import UIKit
 
 class CoordsModel: Object {
     @objc dynamic var lat : String? = nil
